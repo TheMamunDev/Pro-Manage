@@ -20,6 +20,7 @@ export async function POST(req: Request) {
     const session = await getServerSession(authOptions);
     if (!session)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    await connectDB();
 
     const body = await req.json();
     const validation = taskSchema.safeParse(body);
@@ -28,7 +29,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: validation.error }, { status: 400 });
     }
 
-    await connectDB();
     const assigneeId = validation.data.assignee || session.user.id;
     const task = await Task.create({
       ...validation.data,

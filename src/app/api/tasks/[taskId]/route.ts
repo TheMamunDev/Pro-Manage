@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/lib/auth';
 import connectDB from '@/app/lib/db';
 import Task from '@/app/models/Task';
+import Project from '@/app/models/Project';
 
 export async function PATCH(
   req: Request,
@@ -12,7 +13,6 @@ export async function PATCH(
     const session = await getServerSession(authOptions);
     if (!session)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
     const body = await req.json();
     const { status, priority, title, description } = body;
 
