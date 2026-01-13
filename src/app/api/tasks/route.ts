@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { z } from 'zod';
+import Project from '@/app/models/Project';
 import { authOptions } from '@/app/lib/auth';
 import connectDB from '@/app/lib/db';
 import Task from '@/app/models/Task';
-import Project from '@/app/models/Project';
 
 const taskSchema = z.object({
   title: z.string().min(1, 'Title is required'),
