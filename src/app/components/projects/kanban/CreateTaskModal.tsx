@@ -229,7 +229,7 @@ export default function CreateTaskModal({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {projectMembers.map(member => (
+                        {projectMembers?.map(member => (
                           <SelectItem key={member._id} value={member._id}>
                             <div className="flex items-center gap-2">
                               <Avatar className="h-6 w-6">
