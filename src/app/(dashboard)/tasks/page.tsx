@@ -13,9 +13,7 @@ import Task from '@/app/models/Task';
 async function getMyTasks() {
   const session = await getServerSession(authOptions);
   if (!session) return [];
-
   await connectDB();
-
   const tasks = await Task.find({ assignee: session.user.id })
     .populate('projectId', 'name')
     .sort({ dueDate: 1, createdAt: -1 })
@@ -26,11 +24,14 @@ async function getMyTasks() {
 
 export default async function MyTasksPage() {
   const tasks = await getMyTasks();
-  const todoTasks = tasks.filter(
+  const safeTasks = Array.isArray(tasks) ? tasks : [];
+  const todoTasks = safeTasks.filter(
     (t: any) => t.status === 'todo' || t.status === 'backlog'
   );
-  const inProgressTasks = tasks.filter((t: any) => t.status === 'in-progress');
-  const doneTasks = tasks.filter((t: any) => t.status === 'done');
+  const inProgressTasks = safeTasks.filter(
+    (t: any) => t.status === 'in-progress'
+  );
+  const doneTasks = safeTasks.filter((t: any) => t.status === 'done');
 
   return (
     <div className="flex flex-col gap-8">

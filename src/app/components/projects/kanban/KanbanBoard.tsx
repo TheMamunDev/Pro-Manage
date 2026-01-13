@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import BoardColumn from './BoardColumn';
-
 import { toast } from 'sonner';
 import { useSession } from 'next-auth/react';
 import CreateTaskModal from './CreateTaskModal';
@@ -30,6 +29,7 @@ export default function KanbanBoard({ projectId }: KanbanBoardProps) {
       try {
         const res = await fetch(`/api/tasks?projectId=${projectId}`);
         const data = await res.json();
+
         setTasks(data);
       } catch (error) {
         console.error('Failed to fetch tasks');
