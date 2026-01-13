@@ -58,9 +58,9 @@ export async function PATCH(
   }
 }
 
-export async function DELETE(
-  req: Request,
-  { params }: { params: { taskId: string } }
-) {
-  return NextResponse.json({ message: 'Task deleted' });
-}
+// export async function DELETE(
+//   req: Request,
+//   { params }: { params: { taskId: string } }
+// ) {
+//   return NextResponse.json({ message: 'Task deleted' });
+// }
