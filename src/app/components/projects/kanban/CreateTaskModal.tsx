@@ -57,7 +57,7 @@ interface CreateTaskModalProps {
   projectId: string;
   defaultStatus: string;
   onTaskCreated: (task: any) => void;
-  projectMembers: any[];
+  projectMembers?: any[];
 }
 
 export default function CreateTaskModal({

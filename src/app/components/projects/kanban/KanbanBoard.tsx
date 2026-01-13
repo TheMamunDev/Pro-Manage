@@ -3,9 +3,10 @@
 import { useState, useEffect } from 'react';
 import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import BoardColumn from './BoardColumn';
-import CreateTaskModal from './CreateTaskModal';
+
 import { toast } from 'sonner';
 import { useSession } from 'next-auth/react';
+import CreateTaskModal from './CreateTaskModal';
 
 const columns = [
   { id: 'todo', title: 'To Do', color: 'bg-slate-500' },
