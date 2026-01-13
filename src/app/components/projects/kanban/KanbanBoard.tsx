@@ -30,7 +30,9 @@ export default function KanbanBoard({ projectId }: KanbanBoardProps) {
         const res = await fetch(`/api/tasks?projectId=${projectId}`);
         const data = await res.json();
 
-        setTasks(data);
+        if (Array.isArray(data)) {
+          setTasks(data);
+        }
       } catch (error) {
         console.error('Failed to fetch tasks');
       } finally {
