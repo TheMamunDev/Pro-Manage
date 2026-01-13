@@ -75,7 +75,7 @@ export default function ProjectHeader({ project }: ProjectHeaderProps) {
             {isAdmin && (
               <Button size="sm" onClick={() => setIsTaskModalOpen(true)}>
                 <Plus className="h-4 w-4 mr-2" />
-                Add Task
+                Add Taskk
               </Button>
             )}
           </div>
