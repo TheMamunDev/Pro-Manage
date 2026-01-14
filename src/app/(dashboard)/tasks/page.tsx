@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { authOptions } from '@/app/lib/auth';
 import connectDB from '@/app/lib/db';
 import Task from '@/app/models/Task';
+import '@/app/models/Project';
 
 async function getMyTasks() {
   const session = await getServerSession(authOptions);
