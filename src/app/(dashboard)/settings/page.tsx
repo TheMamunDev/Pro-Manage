@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { Loader2, Moon, Sun, Monitor } from 'lucide-react';
 
@@ -29,6 +30,7 @@ import {
 } from '@/components/ui/form';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { toast } from 'sonner';
+import { se } from 'date-fns/locale';
 
 const profileSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -37,8 +39,12 @@ const profileSchema = z.object({
 
 export default function SettingsPage() {
   const { data: session, update } = useSession();
+  const router = useRouter();
+  console.log(session);
   const { setTheme, theme } = useTheme();
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
@@ -48,13 +54,42 @@ export default function SettingsPage() {
     },
   });
 
+  useEffect(() => {
+    if (session?.user) {
+      form.reset({
+        name: session.user.name || '',
+        image: session.user.image || '',
+      });
+    }
+  }, [session, form]);
+
   async function onSubmit(values: z.infer<typeof profileSchema>) {
     setIsLoading(true);
     try {
+      let imageUrl = values.image;
+
+      if (selectedFile) {
+        const formData = new FormData();
+        formData.append('image', selectedFile);
+        const res = await fetch(
+          `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_KEY}`,
+          {
+            method: 'POST',
+            body: formData,
+          }
+        );
+        const data = await res.json();
+        if (data.success) {
+          imageUrl = data.data.url;
+        } else {
+          throw new Error('Image upload failed');
+        }
+      }
+
       const res = await fetch('/api/profile', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
+        body: JSON.stringify({ ...values, image: imageUrl }),
       });
 
       if (!res.ok) throw new Error('Failed to update profile');
@@ -62,14 +97,15 @@ export default function SettingsPage() {
         ...session,
         user: {
           ...session?.user,
-          name: values.name,
-          image: values.image,
+          ...values,
+          image: imageUrl,
         },
       });
 
+      router.refresh();
       toast('Profile updated successfully!');
     } catch (error) {
-      toast('Something went wrong');
+      toast((error as Error).message || 'Something went wrong');
     } finally {
       setIsLoading(false);
     }
@@ -94,31 +130,50 @@ export default function SettingsPage() {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <div className="flex items-center gap-6">
+              <div className="flex flex-col sm:flex-row items-center gap-6">
                 <Avatar className="h-20 w-20 border-2">
-                  <AvatarImage src={form.watch('image') || ''} />
+                  <AvatarImage
+                    src={
+                      previewUrl ||
+                      form.watch('image') ||
+                      'https://x.com/dotenvx'
+                    }
+                  />
                   <AvatarFallback className="text-lg bg-primary/10 text-primary">
                     {session?.user?.name?.[0]}
                   </AvatarFallback>
                 </Avatar>
 
                 <div className="flex-1 space-y-1">
-                  <Label>Profile Image URL</Label>
+                  <Label>Profile Image</Label>
                   <FormField
                     control={form.control}
                     name="image"
-                    render={({ field }) => (
+                    render={({ field: { value, onChange, ...fieldProps } }) => (
                       <FormItem>
                         <FormControl>
-                          <Input placeholder="https://..." {...field} />
+                          <Input
+                            {...fieldProps}
+                            type="file"
+                            accept="image/*"
+                            onChange={event => {
+                              const file =
+                                event.target.files && event.target.files[0];
+                              if (file) {
+                                if (file.size > 2 * 1024 * 1024) {
+                                  toast('File size must be less than 2MB');
+                                  return;
+                                }
+                                setSelectedFile(file);
+                                setPreviewUrl(URL.createObjectURL(file));
+                              }
+                            }}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  <p className="text-[10px] text-muted-foreground">
-                    (Note: In a production app, we would use file upload here.)
-                  </p>
                 </div>
               </div>
 

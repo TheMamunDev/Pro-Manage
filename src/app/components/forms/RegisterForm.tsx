@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Eye, EyeOff } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -30,17 +31,21 @@ import { toast } from 'sonner';
 const formSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Invalid email address'),
+  image: z.string().optional(),
   password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
 export default function RegisterForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
       email: '',
+      image: '',
       password: '',
     },
   });
@@ -48,10 +53,31 @@ export default function RegisterForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
+      let imageUrl = values.image;
+
+      if (selectedFile) {
+        const formData = new FormData();
+        formData.append('image', selectedFile);
+        const url = `https://api.imgbb.com/1/upload?key=${
+          process.env.NEXT_PUBLIC_IMGBB_KEY || 'YOUR_IMGBB_API_KEY'
+        }`;
+        const res = await fetch(url, {
+          method: 'POST',
+          body: formData,
+        });
+        const data = await res.json();
+        if (data.success) {
+          console.log(data.data.url);
+          imageUrl = data.data.url;
+        } else {
+          throw new Error('Image upload failed');
+        }
+      }
+
       const response = await fetch('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
+        body: JSON.stringify({ ...values, image: imageUrl }),
       });
 
       const data = await response.json();
@@ -119,17 +145,61 @@ export default function RegisterForm() {
             />
             <FormField
               control={form.control}
+              name="image"
+              render={({ field: { value, onChange, ...fieldProps } }) => (
+                <FormItem>
+                  <FormLabel className="text-foreground">
+                    Profile Image
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...fieldProps}
+                      type="file"
+                      accept="image/*"
+                      onChange={event => {
+                        const file =
+                          event.target.files && event.target.files[0];
+                        if (file) {
+                          if (file.size > 2 * 1024 * 1024) {
+                            toast('File size must be less than 2MB');
+                            return;
+                          }
+                          setSelectedFile(file);
+                        }
+                      }}
+                      className="bg-background"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="password"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-foreground">Password</FormLabel>
                   <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="******"
-                      {...field}
-                      className="bg-background"
-                    />
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="******"
+                        {...field}
+                        className="bg-background pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      >
+                        {showPassword ? (
+                          <EyeOff size={16} />
+                        ) : (
+                          <Eye size={16} />
+                        )}
+                      </button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
