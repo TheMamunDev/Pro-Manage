@@ -9,6 +9,7 @@ export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ taskId: string }> }
 ) {
+  const { taskId } = await params;
   try {
     const session = await getServerSession(authOptions);
     if (!session)
@@ -17,7 +18,6 @@ export async function PATCH(
     const { status, priority, title, description } = body;
 
     await connectDB();
-    const { taskId } = await params;
 
     const existingTask = await Task.findById(taskId);
     if (!existingTask) {

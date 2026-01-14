@@ -1,5 +1,4 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
-import Project from '@/app/models/Project';
 
 export interface ITask extends Document {
   title: string;
