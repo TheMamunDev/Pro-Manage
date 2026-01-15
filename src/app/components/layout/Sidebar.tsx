@@ -13,7 +13,7 @@ interface SidebarProps {
 export default function Sidebar(session: SidebarProps) {
   const pathname = usePathname();
   if (!session) return null;
-  const user = session.session;
+  const user = session.session?.user as any;
   console.log(user);
 
   return (
@@ -29,7 +29,7 @@ export default function Sidebar(session: SidebarProps) {
         </Link>
 
         <div className="space-y-2">
-          {user.role === 'admin'
+          {user?.role === 'admin'
             ? routes
                 .filter(route => route.role !== 'member')
                 .map(route => {
