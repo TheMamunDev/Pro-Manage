@@ -38,9 +38,9 @@ export default async function ProjectLayout({
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-60px)]">
+    <div className="flex flex-col justify-center min-h-screen w-full">
       <ProjectHeader project={project} />
-      <main className="flex-1 overflow-hidden bg-muted/20 relative">
+      <main className="flex-1 overflow-auto bg-muted/20 relative">
         {children}
       </main>
     </div>

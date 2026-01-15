@@ -12,6 +12,7 @@ interface BoardColumnProps {
   tasks: any[];
   color: string;
   onAddClick: (columnId: string) => void;
+  isProjectCompleted: boolean;
 }
 
 export default function BoardColumn({
@@ -20,6 +21,7 @@ export default function BoardColumn({
   tasks,
   color,
   onAddClick,
+  isProjectCompleted,
 }: BoardColumnProps) {
   return (
     <div className="flex flex-col w-80 shrink-0 h-full">
@@ -31,14 +33,15 @@ export default function BoardColumn({
             {tasks.length}
           </span>
         </h3>
-        <Button
+        {/* <Button
+          disabled={isProjectCompleted}
           variant="ghost"
           size="icon"
           className="h-7 w-7 hover:bg-muted/80"
           onClick={() => onAddClick(id)}
         >
           <Plus className="h-4 w-4 text-muted-foreground" />
-        </Button>
+        </Button> */}
       </div>
 
       <Droppable droppableId={id}>

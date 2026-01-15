@@ -4,9 +4,16 @@ import { routes } from '@/app/lib/routes';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Session } from 'next-auth';
 
-export default function Sidebar() {
+interface SidebarProps {
+  session: Session | null;
+}
+
+export default function Sidebar(session: SidebarProps) {
   const pathname = usePathname();
+  if (!session) return null;
+  const { user } = session.session;
 
   return (
     <div className="flex h-full flex-col space-y-4 py-4 bg-card text-card-foreground border-r border-border shadow-sm">
@@ -21,29 +28,57 @@ export default function Sidebar() {
         </Link>
 
         <div className="space-y-2">
-          {routes.map(route => {
-            const isActive = pathname === route.href;
-            return (
-              <Link
-                key={route.href}
-                href={route.href}
-                className={cn(
-                  'group flex items-center gap-x-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ease-in-out hover:shadow-sm',
-                  isActive
-                    ? 'bg-primary text-primary-foreground shadow-md'
-                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                )}
-              >
-                <route.icon
-                  className={cn(
-                    'h-5 w-5 transition-transform group-hover:scale-110',
-                    isActive ? 'text-primary-foreground' : route.color
-                  )}
-                />
-                <span>{route.label}</span>
-              </Link>
-            );
-          })}
+          {user.role === 'admin'
+            ? routes
+                .filter((route) => route.role !== 'member')
+                .map((route) => {
+                  const isActive = pathname === route.href;
+                  return (
+                    <Link
+                      key={route.href}
+                      href={route.href}
+                      className={cn(
+                        'group flex items-center gap-x-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ease-in-out hover:shadow-sm',
+                        isActive
+                          ? 'bg-primary text-primary-foreground shadow-md'
+                          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                      )}
+                    >
+                      <route.icon
+                        className={cn(
+                          'h-5 w-5 transition-transform group-hover:scale-110',
+                          isActive ? 'text-primary-foreground' : route.color
+                        )}
+                      />
+                      <span>{route.label}</span>
+                    </Link>
+                  );
+                })
+            : routes
+                .filter(route => route.role !== 'admin')
+                .map(route => {
+                  const isActive = pathname === route.href;
+                  return (
+                    <Link
+                      key={route.href}
+                      href={route.href}
+                      className={cn(
+                        'group flex items-center gap-x-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ease-in-out hover:shadow-sm',
+                        isActive
+                          ? 'bg-primary text-primary-foreground shadow-md'
+                          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                      )}
+                    >
+                      <route.icon
+                        className={cn(
+                          'h-5 w-5 transition-transform group-hover:scale-110',
+                          isActive ? 'text-primary-foreground' : route.color
+                        )}
+                      />
+                      <span>{route.label}</span>
+                    </Link>
+                  );
+                })}
         </div>
       </div>
     </div>

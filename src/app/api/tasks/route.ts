@@ -69,7 +69,7 @@ export async function GET(req: Request) {
 
     const tasks = await Task.find(query)
       .populate('assignee', 'name image')
-      .populate('projectId', 'name')
+      .populate('projectId', 'name status')
       .sort({ createdAt: -1 });
 
     return NextResponse.json(tasks);

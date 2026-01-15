@@ -6,6 +6,7 @@ import BoardColumn from './BoardColumn';
 import { toast } from 'sonner';
 import { useSession } from 'next-auth/react';
 import CreateTaskModal from './CreateTaskModal';
+import { is } from 'date-fns/locale';
 
 const columns = [
   { id: 'todo', title: 'To Do', color: 'bg-slate-500' },
@@ -15,16 +16,26 @@ const columns = [
 
 interface KanbanBoardProps {
   projectId: string;
+  initialTasks?: any[];
 }
 
-export default function KanbanBoard({ projectId }: KanbanBoardProps) {
-  const [tasks, setTasks] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function KanbanBoard({
+  projectId,
+  initialTasks,
+}: KanbanBoardProps) {
+  const [tasks, setTasks] = useState<any[]>(initialTasks || []);
+  const [loading, setLoading] = useState(!initialTasks);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedColumn, setSelectedColumn] = useState('todo');
   const { data: session } = useSession();
 
   useEffect(() => {
+    if (initialTasks) {
+      setTasks(initialTasks);
+      setLoading(false);
+      return;
+    }
+
     async function fetchTasks() {
       try {
         const res = await fetch(`/api/tasks?projectId=${projectId}`);
@@ -39,9 +50,14 @@ export default function KanbanBoard({ projectId }: KanbanBoardProps) {
       }
     }
     fetchTasks();
-  }, [projectId]);
+  }, [projectId, initialTasks]);
+
+  const isProjectCompleted =
+    tasks.length > 0 && tasks[0].projectId?.status === 'completed';
 
   const onDragEnd = async (result: DropResult) => {
+    if (isProjectCompleted)
+      return toast('This project is already completed , can not move tasks');
     const newTasks = [...tasks];
     const { destination, source, draggableId } = result;
     if (!destination) return;
@@ -104,6 +120,7 @@ export default function KanbanBoard({ projectId }: KanbanBoardProps) {
                 color={col.color}
                 tasks={columnTasks}
                 onAddClick={handleAddClick}
+                isProjectCompleted={isProjectCompleted}
               />
             );
           })}

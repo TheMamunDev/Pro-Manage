@@ -110,7 +110,6 @@ export default function CreateTaskModal({
       if (!response.ok) throw new Error('Failed to create task');
 
       const newTask = await response.json();
-
       onTaskCreated(newTask);
       toast('Task created');
       onClose();

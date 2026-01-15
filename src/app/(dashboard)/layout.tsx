@@ -1,16 +1,21 @@
+import { useSession } from 'next-auth/react';
 import Header from '../components/layout/Header';
 import Sidebar from '../components/layout/Sidebar';
+import { authOptions } from '../lib/auth';
+import { getServerSession } from 'next-auth';
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getServerSession(authOptions);
+
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
         <div className="flex h-full max-h-screen flex-col gap-2">
-          <Sidebar />
+          <Sidebar session={session} />
         </div>
       </div>
 

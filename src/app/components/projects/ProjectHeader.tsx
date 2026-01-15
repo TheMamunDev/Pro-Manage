@@ -9,6 +9,7 @@ import { Settings, Layout, ListTodo, Plus } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import CreateTaskModal from './kanban/CreateTaskModal';
 import { useSession } from 'next-auth/react';
+import { toast } from 'sonner';
 
 interface ProjectHeaderProps {
   project: any;
@@ -72,10 +73,19 @@ export default function ProjectHeader({ project }: ProjectHeaderProps) {
               </div>
             </div>
 
-            {isAdmin && (
+            {project.status === 'active' ? (
               <Button size="sm" onClick={() => setIsTaskModalOpen(true)}>
                 <Plus className="h-4 w-4 mr-2" />
-                Add Taskk
+                Add Task
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                onClick={() =>
+                  toast('This project is completed , can not add tasks')
+                }
+              >
+                Add Task
               </Button>
             )}
           </div>

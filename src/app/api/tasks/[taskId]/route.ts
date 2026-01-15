@@ -3,7 +3,6 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/lib/auth';
 import connectDB from '@/app/lib/db';
 import Task from '@/app/models/Task';
-import Project from '@/app/models/Project';
 
 export async function PATCH(
   req: Request,
