@@ -69,18 +69,19 @@ export async function PATCH(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
+  const { projectId } = await params;
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
     await connectDB();
-    const project = await Project.findByIdAndDelete(params.projectId);
+    const project = await Project.findByIdAndDelete(projectId);
     if (!project)
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
-    await Task.deleteMany({ projectId: params.projectId });
+    await Task.deleteMany({ projectId: projectId });
     return NextResponse.json({ message: 'Project deleted successfully' });
   } catch (error) {
     return NextResponse.json(
