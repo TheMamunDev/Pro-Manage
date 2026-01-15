@@ -13,7 +13,8 @@ interface SidebarProps {
 export default function Sidebar(session: SidebarProps) {
   const pathname = usePathname();
   if (!session) return null;
-  const { user } = session.session;
+  const user = session.session;
+  console.log(user);
 
   return (
     <div className="flex h-full flex-col space-y-4 py-4 bg-card text-card-foreground border-r border-border shadow-sm">
@@ -30,8 +31,8 @@ export default function Sidebar(session: SidebarProps) {
         <div className="space-y-2">
           {user.role === 'admin'
             ? routes
-                .filter((route) => route.role !== 'member')
-                .map((route) => {
+                .filter(route => route.role !== 'member')
+                .map(route => {
                   const isActive = pathname === route.href;
                   return (
                     <Link
