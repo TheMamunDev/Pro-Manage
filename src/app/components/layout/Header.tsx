@@ -33,7 +33,7 @@ export default function Header() {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="flex flex-col p-0">
-            <Sidebar />
+            <Sidebar session={session} />
           </SheetContent>
         </Sheet>
 
