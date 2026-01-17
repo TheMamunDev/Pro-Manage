@@ -28,6 +28,14 @@ export default function Footer() {
             <ul className="space-y-3">
               <li>
                 <Link
+                  href="/roadmap"
+                  className="text-sm text-muted-foreground hover:text-primary"
+                >
+                  Roadmap
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="#"
                   className="text-sm text-muted-foreground hover:text-primary"
                 >
@@ -40,14 +48,6 @@ export default function Footer() {
                   className="text-sm text-muted-foreground hover:text-primary"
                 >
                   Pricing
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#"
-                  className="text-sm text-muted-foreground hover:text-primary"
-                >
-                  Roadmap
                 </Link>
               </li>
             </ul>
@@ -76,7 +76,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="#"
+                  href="/contact"
                   className="text-sm text-muted-foreground hover:text-primary"
                 >
                   Contact
@@ -92,10 +92,10 @@ export default function Footer() {
             <ul className="space-y-3">
               <li>
                 <Link
-                  href="#"
+                  href="/about"
                   className="text-sm text-muted-foreground hover:text-primary"
                 >
-                  Privacy
+                  About Us
                 </Link>
               </li>
               <li>

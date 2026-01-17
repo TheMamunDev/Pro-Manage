@@ -55,7 +55,9 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ user, account }) {
       if (account?.provider === 'google') {
-        if (!user.email) return false;
+        if (!user.name || !user.email) {
+          throw new Error('Invalid OAuth user data');
+        }
         await connectDB();
         try {
           const existingUser = await User.findOne({ email: user.email });
@@ -63,7 +65,7 @@ export const authOptions: NextAuthOptions = {
             await User.create({
               name: user.name,
               email: user.email,
-              image: user.image,
+              image: user.image ?? 'https://img.icons8.com/office/300/user.png',
               role: 'member',
               authType: 'google',
             });

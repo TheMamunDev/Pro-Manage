@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
+import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -18,6 +19,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 export default function Navbar() {
   const { data: session } = useSession();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
@@ -39,25 +41,41 @@ export default function Navbar() {
           <div className="hidden md:flex items-center space-x-8">
             <Link
               href="/about"
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              className={`text-sm font-medium transition-colors ${
+                pathname === '/about'
+                  ? 'text-foreground'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
             >
               About us
             </Link>
             <Link
               href="/roadmap"
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              className={`text-sm font-medium transition-colors ${
+                pathname === '/roadmap'
+                  ? 'text-foreground'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
             >
               Roadmap
             </Link>
             <Link
               href="/documentation"
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              className={`text-sm font-medium transition-colors ${
+                pathname === '/documentation'
+                  ? 'text-foreground'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
             >
               Docs
             </Link>
             <Link
               href="/contact"
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              className={`text-sm font-medium transition-colors ${
+                pathname === '/contact'
+                  ? 'text-foreground'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
             >
               Contact Us
             </Link>
@@ -145,25 +163,41 @@ export default function Navbar() {
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-background">
             <Link
               href="/about"
-              className="block px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted"
+              className={`block px-3 py-2 rounded-md text-base font-medium ${
+                pathname === '/about'
+                  ? 'text-foreground bg-muted'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+              }`}
             >
               About Us
             </Link>
             <Link
               href="/roadmap"
-              className="block px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted"
+              className={`block px-3 py-2 rounded-md text-base font-medium ${
+                pathname === '/roadmap'
+                  ? 'text-foreground bg-muted'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+              }`}
             >
               Roadmap
             </Link>
             <Link
               href="/documentation"
-              className="block px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted"
+              className={`block px-3 py-2 rounded-md text-base font-medium ${
+                pathname === '/documentation'
+                  ? 'text-foreground bg-muted'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+              }`}
             >
               Docs
             </Link>
             <Link
               href="/contact"
-              className="block px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted"
+              className={`block px-3 py-2 rounded-md text-base font-medium ${
+                pathname === '/contact'
+                  ? 'text-foreground bg-muted'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+              }`}
             >
               Contact Us
             </Link>
