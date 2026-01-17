@@ -6,11 +6,11 @@ import Footer from './components/layout/Footer';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col ">
       <Navbar />
-      <main className="flex-1">
+      <main className="flex-1 max-w-7xl mx-auto">
         <section className="relative py-20 md:py-32 overflow-hidden">
-          <div className="container px-4 md:px-6 mx-auto relative z-10">
+          <div className=" px-4 md:px-6 mx-auto relative z-10">
             <div className="flex flex-col items-center text-center space-y-4 max-w-3xl mx-auto">
               <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80 mb-4">
                 <span className="flex h-2 w-2 rounded-full bg-primary mr-2"></span>
