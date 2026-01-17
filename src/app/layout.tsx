@@ -4,6 +4,7 @@ import './globals.css';
 import { Toaster } from 'sonner';
 import AuthProvider from './providers/AuthProvider';
 import { ThemeProvider } from './providers/ThemeProvider';
+import Navbar from './components/layout/Navbar';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -24,8 +25,8 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AuthProvider>{children}</AuthProvider>
           <Toaster />
+          <AuthProvider>{children}</AuthProvider>
         </ThemeProvider>
       </body>
     </html>

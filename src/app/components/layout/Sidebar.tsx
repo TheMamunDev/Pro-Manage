@@ -14,12 +14,11 @@ export default function Sidebar(session: SidebarProps) {
   const pathname = usePathname();
   if (!session) return null;
   const user = session.session?.user as any;
-  console.log(user);
 
   return (
     <div className="flex h-full flex-col space-y-4 py-4 bg-card text-card-foreground border-r border-border shadow-sm">
       <div className="px-6 py-4 flex-1">
-        <Link href="/dashboard" className="flex items-center gap-3 mb-10 pl-2">
+        <Link href="/" className="flex items-center gap-3 mb-10 pl-2">
           <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-md">
             <span className="text-primary-foreground font-bold text-lg">P</span>
           </div>

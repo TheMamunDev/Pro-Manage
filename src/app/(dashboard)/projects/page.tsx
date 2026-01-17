@@ -55,7 +55,6 @@ export default async function ProjectsPage() {
           <p className="text-muted-foreground mb-4">
             Create your first project to get started.
           </p>
-          <CreateProjectModal />
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -90,7 +89,7 @@ export default async function ProjectsPage() {
                   <div className="flex items-center gap-4 mt-6">
                     <div className="flex items-center text-xs text-muted-foreground">
                       <CalendarDays className="h-3.5 w-3.5 mr-1" />
-                      {format(new Date(project.startDate), 'MMM d, yyyy')} 
+                      {format(new Date(project.startDate), 'MMM d, yyyy')}
                     </div>
                     {project?.endDate && (
                       <div className="flex items-center text-xs text-muted-foreground">

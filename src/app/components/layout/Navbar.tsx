@@ -38,16 +38,28 @@ export default function Navbar() {
 
           <div className="hidden md:flex items-center space-x-8">
             <Link
-              href="#features"
+              href="/about"
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
-              Features
+              About us
             </Link>
             <Link
-              href="#pricing"
+              href="/roadmap"
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
-              Pricing
+              Roadmap
+            </Link>
+            <Link
+              href="/documentation"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Docs
+            </Link>
+            <Link
+              href="/contact"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Contact Us
             </Link>
             <Link
               href="#testimonials"
@@ -132,16 +144,28 @@ export default function Navbar() {
         <div className="md:hidden border-t">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-background">
             <Link
-              href="#features"
+              href="/about"
               className="block px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted"
             >
-              Features
+              About Us
             </Link>
             <Link
-              href="#pricing"
+              href="/roadmap"
               className="block px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted"
             >
-              Pricing
+              Roadmap
+            </Link>
+            <Link
+              href="/documentation"
+              className="block px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted"
+            >
+              Docs
+            </Link>
+            <Link
+              href="/contact"
+              className="block px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted"
+            >
+              Contact Us
             </Link>
             {session ? (
               <>

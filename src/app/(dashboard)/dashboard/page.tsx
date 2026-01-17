@@ -7,6 +7,7 @@ import Project from '@/app/models/Project';
 import Task from '@/app/models/Task';
 import User from '@/app/models/User';
 import { format } from 'date-fns';
+import OverviewChart from '@/app/components/dashboard/OverviewChart';
 
 const StatCard = ({
   title,
@@ -52,22 +53,39 @@ async function getDashboardData() {
   if (!session) return null;
   await connectDB();
   const userId = session.user.id;
+  const isAdmin = session.user.role === 'admin';
 
-  const [projects, activeTasks, completedTasks, users, recentActivity] =
-    await Promise.all([
-      Project.countDocuments({ members: userId }),
-      Task.countDocuments({
-        assignee: userId,
-        status: { $in: ['todo', 'in-progress'] },
-      }),
-      Task.countDocuments({ assignee: userId, status: 'done' }),
-      User.countDocuments({}),
-      Task.find({ assignee: userId })
-        .sort({ updatedAt: -1 })
-        .limit(5)
-        .populate('projectId', 'name')
-        .lean(),
-    ]);
+  const projectQuery = isAdmin ? {} : { members: userId };
+  const taskQuery = isAdmin ? {} : { assignee: userId };
+
+  const [
+    projects,
+    activeTasks,
+    completedTasks,
+    users,
+    recentActivity,
+    backlogCount,
+    todoCount,
+    inProgressCount,
+    doneCount,
+  ] = await Promise.all([
+    Project.countDocuments(projectQuery),
+    Task.countDocuments({
+      ...taskQuery,
+      status: { $in: ['todo', 'in-progress'] },
+    }),
+    Task.countDocuments({ ...taskQuery, status: 'done' }),
+    User.countDocuments({}),
+    Task.find(taskQuery)
+      .sort({ updatedAt: -1 })
+      .limit(5)
+      .populate('projectId', 'name')
+      .lean(),
+    Task.countDocuments({ ...taskQuery, status: 'backlog' }),
+    Task.countDocuments({ ...taskQuery, status: 'todo' }),
+    Task.countDocuments({ ...taskQuery, status: 'in-progress' }),
+    Task.countDocuments({ ...taskQuery, status: 'done' }),
+  ]);
 
   return {
     projects,
@@ -76,6 +94,12 @@ async function getDashboardData() {
     users,
     recentActivity: JSON.parse(JSON.stringify(recentActivity)),
     user: session.user,
+    chartData: [
+      { name: 'Backlog', total: backlogCount, fill: '#94a3b8' },
+      { name: 'To Do', total: todoCount, fill: '#64748b' },
+      { name: 'In Progress', total: inProgressCount, fill: '#3b82f6' },
+      { name: 'Done', total: doneCount, fill: '#10b981' },
+    ],
   };
 }
 
@@ -134,14 +158,10 @@ export default async function DashboardPage() {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-4 shadow-md border-none">
           <CardHeader>
-            <CardTitle>Overview</CardTitle>
+            <CardTitle>Task Overview</CardTitle>
           </CardHeader>
           <CardContent className="pl-2">
-            <div className="h-[300px] flex items-center justify-center rounded-lg bg-muted/20 border-2 border-dashed border-muted">
-              <span className="text-muted-foreground">
-                Chart Component Will Go Here
-              </span>
-            </div>
+            <OverviewChart data={data.chartData} />
           </CardContent>
         </Card>
 

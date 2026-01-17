@@ -60,7 +60,7 @@ export default function Footer() {
             <ul className="space-y-3">
               <li>
                 <Link
-                  href="#"
+                  href="/documentation"
                   className="text-sm text-muted-foreground hover:text-primary"
                 >
                   Documentation
@@ -68,7 +68,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="#"
+                  href="/guide"
                   className="text-sm text-muted-foreground hover:text-primary"
                 >
                   Guides

@@ -1,5 +1,6 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import GoogleProvider from 'next-auth/providers/google';
 
 import bcrypt from 'bcryptjs';
 import connectDB from './db';
@@ -7,6 +8,10 @@ import User from '../models/User';
 
 export const authOptions: NextAuthOptions = {
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
@@ -48,10 +53,42 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user, trigger, session }) {
+    async signIn({ user, account }) {
+      if (account?.provider === 'google') {
+        await connectDB();
+        try {
+          const existingUser = await User.findOne({ email: user.email });
+          if (!existingUser) {
+            await User.create({
+              name: user.name,
+              email: user.email,
+              image: user.image,
+              role: 'member',
+              authType: 'google',
+            });
+          }
+          return true;
+        } catch (error) {
+          console.log('Error saving user', error);
+          return false;
+        }
+      }
+      return true;
+    },
+    async jwt({ token, user, trigger, session, account }) {
       if (user) {
-        token.id = user.id;
-        token.role = user.role;
+        if (account?.provider === 'google') {
+          await connectDB();
+          const dbUser = await User.findOne({ email: user.email });
+          if (dbUser) {
+            token.id = dbUser._id.toString();
+            token.role = dbUser.role;
+            token.picture = dbUser.image;
+          }
+        } else {
+          token.id = user.id;
+          token.role = user.role;
+        }
       }
       if (trigger === 'update' && session?.user) {
         token.name = session.user.name;
