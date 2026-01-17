@@ -12,7 +12,7 @@ async function getTasks(projectId: string) {
 
   const tasks = await Task.find({ projectId })
     .populate('assignee', 'name image')
-    .populate('projectId', 'name status')
+    .populate('projectId', 'name status endDate')
     .sort({ createdAt: -1 })
     .lean();
 

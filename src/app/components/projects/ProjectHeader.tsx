@@ -24,6 +24,11 @@ export default function ProjectHeader({ project }: ProjectHeaderProps) {
   const baseUrl = `/projects/${project._id}`;
   const isAdmin = session?.user?.role === 'admin';
 
+  const isTimeExpired =
+    project.endDate && new Date(project.endDate) < new Date();
+
+  console.log(isTimeExpired, 'istime');
+
   const tabs = [
     { label: 'Board', href: baseUrl, icon: Layout },
     { label: 'List', href: `${baseUrl}/list`, icon: ListTodo },
@@ -37,7 +42,7 @@ export default function ProjectHeader({ project }: ProjectHeaderProps) {
   return (
     <>
       <div className="flex flex-col gap-4 border-b bg-background px-6 pt-6 pb-2">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col md:flex-row gap-4 md:gap-0 items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-xl">
               {project.name.charAt(0).toUpperCase()}
@@ -51,7 +56,6 @@ export default function ProjectHeader({ project }: ProjectHeaderProps) {
               </p>
             </div>
           </div>
-
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 mr-2">
               <span className="text-xs text-muted-foreground hidden md:inline-block">
@@ -73,7 +77,16 @@ export default function ProjectHeader({ project }: ProjectHeaderProps) {
               </div>
             </div>
 
-            {project.status === 'active' ? (
+            {isTimeExpired ? (
+              <Button
+                size="sm"
+                onClick={() =>
+                  toast('This project is expired , can not add new tasks')
+                }
+              >
+                Add Task
+              </Button>
+            ) : project.status === 'active' ? (
               <Button size="sm" onClick={() => setIsTaskModalOpen(true)}>
                 <Plus className="h-4 w-4 mr-2" />
                 Add Task

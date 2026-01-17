@@ -64,7 +64,7 @@ export async function GET(req: Request) {
     const projects = await Project.find({
       members: session.user.id,
     })
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: 1 })
       .populate('owner', 'name email image');
 
     return NextResponse.json(projects);

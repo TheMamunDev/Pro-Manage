@@ -13,6 +13,7 @@ interface BoardColumnProps {
   color: string;
   onAddClick: (columnId: string) => void;
   isProjectCompleted: boolean;
+  onUpdateStatus: (taskId: string, newStatus: string) => void;
 }
 
 export default function BoardColumn({
@@ -20,11 +21,10 @@ export default function BoardColumn({
   title,
   tasks,
   color,
-  onAddClick,
-  isProjectCompleted,
+  onUpdateStatus,
 }: BoardColumnProps) {
   return (
-    <div className="flex flex-col w-80 shrink-0 h-full">
+    <div className="flex flex-col w-[85vw] md:w-80 shrink-0 h-full">
       <div className="flex items-center justify-between mb-3 px-1">
         <h3 className="font-semibold text-sm text-foreground flex items-center gap-2">
           <span className={`h-2.5 w-2.5 rounded-full ${color}`}></span>
@@ -33,15 +33,6 @@ export default function BoardColumn({
             {tasks.length}
           </span>
         </h3>
-        {/* <Button
-          disabled={isProjectCompleted}
-          variant="ghost"
-          size="icon"
-          className="h-7 w-7 hover:bg-muted/80"
-          onClick={() => onAddClick(id)}
-        >
-          <Plus className="h-4 w-4 text-muted-foreground" />
-        </Button> */}
       </div>
 
       <Droppable droppableId={id}>
@@ -55,7 +46,12 @@ export default function BoardColumn({
             `}
           >
             {tasks.map((task, index) => (
-              <TaskCard key={task._id} task={task} index={index} />
+              <TaskCard
+                key={task._id}
+                task={task}
+                index={index}
+                onUpdateStatus={onUpdateStatus}
+              />
             ))}
             {provided.placeholder}
           </div>

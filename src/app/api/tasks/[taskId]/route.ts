@@ -10,13 +10,12 @@ export async function PATCH(
 ) {
   const { taskId } = await params;
   try {
+    await connectDB();
     const session = await getServerSession(authOptions);
     if (!session)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const body = await req.json();
     const { status, priority, title, description } = body;
-
-    await connectDB();
 
     const existingTask = await Task.findById(taskId);
     if (!existingTask) {
@@ -48,7 +47,10 @@ export async function PATCH(
       return NextResponse.json({ error: 'Task not found' }, { status: 404 });
     }
 
-    return NextResponse.json(task);
+    return NextResponse.json({
+      status: 200,
+      message: 'Task updated successfully',
+    });
   } catch (error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },

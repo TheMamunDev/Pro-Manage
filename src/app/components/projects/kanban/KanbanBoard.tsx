@@ -35,7 +35,7 @@ export default function KanbanBoard({
       setLoading(false);
       return;
     }
-
+    console.log(tasks);
     async function fetchTasks() {
       try {
         const res = await fetch(`/api/tasks?projectId=${projectId}`);
@@ -55,9 +55,16 @@ export default function KanbanBoard({
   const isProjectCompleted =
     tasks.length > 0 && tasks[0].projectId?.status === 'completed';
 
+  const isTimeExpired = tasks.some(
+    task =>
+      task.projectId.endDate && new Date(task.projectId.endDate) < new Date()
+  );
+
   const onDragEnd = async (result: DropResult) => {
     if (isProjectCompleted)
       return toast('This project is already completed , can not move tasks');
+    if (isTimeExpired)
+      return toast('This project time has been exprired , can not move tasks');
     const newTasks = [...tasks];
     const { destination, source, draggableId } = result;
     if (!destination) return;
@@ -102,14 +109,49 @@ export default function KanbanBoard({
     setTasks(prev => [newTask, ...prev]);
   };
 
+  const updateTaskStatus = async (taskId: string, newStatus: string) => {
+    if (isProjectCompleted)
+      return toast('This project is already completed , can not move tasks');
+    if (isTimeExpired)
+      return toast('This project time has been exprired , can not move tasks');
+
+    const task = tasks.find(t => t._id === taskId);
+    if (!task) return;
+    if (task.status === newStatus) return;
+
+    const assigneeId = task.assignee?._id || task.assignee;
+    const isAssignee = assigneeId === session?.user?.id;
+    const isAdmin = session?.user?.role === 'admin';
+
+    if (!isAssignee && !isAdmin) {
+      toast('You can only move tasks assigned to you.');
+      return;
+    }
+
+    const newTasks = tasks.map(t =>
+      t._id === taskId ? { ...t, status: newStatus } : t
+    );
+    setTasks(newTasks);
+
+    try {
+      await fetch(`/api/tasks/${taskId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+    } catch (error) {
+      toast('Error updating task status');
+    }
+  };
+
   if (loading) {
     return <div className="p-6 text-muted-foreground">Loading board...</div>;
   }
 
   return (
-    <div className="h-full overflow-x-auto p-6">
+    <div className="h-full overflow-x-auto p-4 md:p-6">
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex h-full gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full h-full gap-6">
           {columns.map(col => {
             const columnTasks = tasks.filter(task => task.status === col.id);
             return (
@@ -121,6 +163,7 @@ export default function KanbanBoard({
                 tasks={columnTasks}
                 onAddClick={handleAddClick}
                 isProjectCompleted={isProjectCompleted}
+                onUpdateStatus={updateTaskStatus}
               />
             );
           })}

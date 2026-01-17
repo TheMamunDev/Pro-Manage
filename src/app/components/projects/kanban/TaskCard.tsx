@@ -4,11 +4,19 @@ import { Draggable } from '@hello-pangea/dnd';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Clock } from 'lucide-react';
+import { Clock, MoreHorizontal } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 
 interface TaskCardProps {
   task: any;
   index: number;
+  onUpdateStatus: (taskId: string, newStatus: string) => void;
 }
 
 const priorityColors = {
@@ -17,7 +25,17 @@ const priorityColors = {
   high: 'bg-orange-100 text-orange-700 hover:bg-orange-100',
 };
 
-export default function TaskCard({ task, index }: TaskCardProps) {
+const STATUSES = [
+  { key: 'todo', label: 'Move to To Do' },
+  { key: 'in-progress', label: 'Move to In Progress' },
+  { key: 'done', label: 'Move to Done' },
+];
+
+export default function TaskCard({
+  task,
+  index,
+  onUpdateStatus,
+}: TaskCardProps) {
   return (
     <Draggable draggableId={task._id} index={index}>
       {(provided, snapshot) => (
@@ -40,6 +58,25 @@ export default function TaskCard({ task, index }: TaskCardProps) {
               >
                 {task.priority}
               </Badge>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-6 w-6 -mr-2">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {STATUSES.filter(status => status.key !== task.status).map(
+                    status => (
+                      <DropdownMenuItem
+                        key={status.key}
+                        onClick={() => onUpdateStatus(task._id, status.key)}
+                      >
+                        {status.label}
+                      </DropdownMenuItem>
+                    )
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </CardHeader>
             <CardContent className="p-3 pt-2">
               <p className="text-sm font-medium leading-snug text-foreground mb-3">

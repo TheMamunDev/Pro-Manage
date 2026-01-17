@@ -24,7 +24,8 @@ async function getProjects() {
   await connectDB();
 
   const projects = await Project.find({ members: session.user.id })
-    .sort({ createdAt: -1 })
+    .sort({ status: 1, createdAt: -1 })
+    .populate('members', 'name image')
     .populate('owner', 'name image')
     .lean();
 
@@ -89,8 +90,14 @@ export default async function ProjectsPage() {
                   <div className="flex items-center gap-4 mt-6">
                     <div className="flex items-center text-xs text-muted-foreground">
                       <CalendarDays className="h-3.5 w-3.5 mr-1" />
-                      {format(new Date(project.startDate), 'MMM d, yyyy')}
+                      {format(new Date(project.startDate), 'MMM d, yyyy')} 
                     </div>
+                    {project?.endDate && (
+                      <div className="flex items-center text-xs text-muted-foreground">
+                        <CalendarDays className="h-3.5 w-3.5 mr-1" />
+                        {format(new Date(project.endDate), 'MMM d, yyyy')}
+                      </div>
+                    )}
                   </div>
                 </CardContent>
 
@@ -106,9 +113,19 @@ export default async function ProjectsPage() {
                       +1
                     </div>
                   </div>
-                  <div className="flex items-center text-xs font-medium text-muted-foreground">
-                    <Users className="h-3.5 w-3.5 mr-1" />
-                    Members
+                  <div className="flex -space-x-2">
+                    {project.members?.map((member: any) => (
+                      <Avatar
+                        key={member._id}
+                        className="h-8 w-8 border-2 border-background"
+                        title={member.name}
+                      >
+                        <AvatarImage src={member.image} />
+                        <AvatarFallback className="text-[10px] bg-primary/10 text-primary">
+                          {member.name?.[0]}
+                        </AvatarFallback>
+                      </Avatar>
+                    ))}
                   </div>
                 </CardFooter>
               </Card>

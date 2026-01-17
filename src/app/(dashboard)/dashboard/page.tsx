@@ -1,5 +1,12 @@
+import { getServerSession } from 'next-auth';
 import { Users, Briefcase, CheckCircle2, Clock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { authOptions } from '@/app/lib/auth';
+import connectDB from '@/app/lib/db';
+import Project from '@/app/models/Project';
+import Task from '@/app/models/Task';
+import User from '@/app/models/User';
+import { format } from 'date-fns';
 
 const StatCard = ({
   title,
@@ -40,16 +47,51 @@ const StatCard = ({
   );
 };
 
-export default function DashboardPage() {
+async function getDashboardData() {
+  const session = await getServerSession(authOptions);
+  if (!session) return null;
+  await connectDB();
+  const userId = session.user.id;
+
+  const [projects, activeTasks, completedTasks, users, recentActivity] =
+    await Promise.all([
+      Project.countDocuments({ members: userId }),
+      Task.countDocuments({
+        assignee: userId,
+        status: { $in: ['todo', 'in-progress'] },
+      }),
+      Task.countDocuments({ assignee: userId, status: 'done' }),
+      User.countDocuments({}),
+      Task.find({ assignee: userId })
+        .sort({ updatedAt: -1 })
+        .limit(5)
+        .populate('projectId', 'name')
+        .lean(),
+    ]);
+
+  return {
+    projects,
+    activeTasks,
+    completedTasks,
+    users,
+    recentActivity: JSON.parse(JSON.stringify(recentActivity)),
+    user: session.user,
+  };
+}
+
+export default async function DashboardPage() {
+  const data = await getDashboardData();
+  if (!data) return null;
+
   return (
     <div className="flex flex-col gap-8">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight text-foreground">
-            Dashboard
+            Welcome back, {data.user.name}
           </h2>
           <p className="text-muted-foreground">
-            Overview of your team's performance.
+            Here is an overview of your projects and tasks.
           </p>
         </div>
       </div>
@@ -57,34 +99,34 @@ export default function DashboardPage() {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Total Projects"
-          value="12"
+          value={data.projects}
           icon={Briefcase}
           trend="up"
-          description="+2 from last month"
+          description="Active projects"
           color={{ bg: 'bg-blue-100', text: 'text-blue-600' }}
         />
         <StatCard
           title="Active Tasks"
-          value="48"
+          value={data.activeTasks}
           icon={Clock}
           trend="up"
-          description="+12% from last week"
+          description="Pending tasks"
           color={{ bg: 'bg-amber-100', text: 'text-amber-600' }}
         />
         <StatCard
           title="Completed"
-          value="128"
+          value={data.completedTasks}
           icon={CheckCircle2}
           trend="up"
-          description="+8% completion rate"
+          description="Tasks finished"
           color={{ bg: 'bg-emerald-100', text: 'text-emerald-600' }}
         />
         <StatCard
           title="Team Members"
-          value="8"
+          value={data.users}
           icon={Users}
-          trend="down"
-          description="-1 inactive user"
+          trend="up"
+          description="Total users"
           color={{ bg: 'bg-violet-100', text: 'text-violet-600' }}
         />
       </div>
@@ -109,18 +151,24 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
-              {[1, 2, 3].map((_, i) => (
-                <div key={i} className="flex items-center">
+              {data.recentActivity.length === 0 && (
+                <p className="text-sm text-muted-foreground">
+                  No recent activity.
+                </p>
+              )}
+              {data.recentActivity.map((task: any) => (
+                <div key={task._id} className="flex items-center">
                   <span className="relative flex h-2 w-2 mr-4">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
                   </span>
                   <div className="space-y-1">
                     <p className="text-sm font-medium leading-none">
-                      Project "Alpha" updated
+                      {task.title}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      2 hours ago by @john_doe
+                      {task.projectId?.name} •{' '}
+                      {format(new Date(task.updatedAt), 'MMM d, h:mm a')}
                     </p>
                   </div>
                 </div>
