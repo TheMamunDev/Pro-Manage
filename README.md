@@ -1,36 +1,115 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ProManage 🚀
+
+**Manage projects with speed and clarity.**
+
+Welcome to **ProManage**! We built this platform with a simple philosophy:
+Project management tools should empower teams, not slow them down. ProManage is
+an all-in-one solution for agile teams to track tasks, manage sprints, and
+collaborate in real-time without the clutter.
+
+Whether you are a solo developer or part of a growing startup, ProManage gives
+you the visibility you need to ship faster.
+
+---
+
+## Key Features
+
+- **Intuitive Kanban Boards**: Visualize your workflow. Drag and drop tasks
+  across columns to update their status instantly.
+- **Agile Sprint Planning**: Move tasks from your backlog to active sprints.
+  Track velocity and keep your team focused on the current goal.
+- **Secure Authentication**: Robust sign-up and sign-in options using **Google
+  OAuth** or standard credentials, powered by NextAuth.js.
+- **Team Collaboration**: Built for teams. Assign roles (Admin/Member), delegate
+  tasks, and keep everyone on the same page.
+- **Fully Responsive**: A seamless experience across desktop, tablet, and mobile
+  devices.
+- **Dark Mode Support**: Because we know developers love dark mode. Switch
+  themes to match your preference.
+
+---
+
+## Screenshots
+
+![App Screenshot 1](https://i.ibb.co.com/1fRsXngS/modern-browser-mockup-3.png)
+![App Screenshot 2](https://i.ibb.co.com/F1BTK6D/modern-browser-mockup-2.png)
+![App Screenshot 3](https://i.ibb.co.com/sJF4c2Df/modern-browser-mockup-1.png)
+
+---
+
+## Tech Stack
+
+ProManage is built using a modern, type-safe stack designed for performance and
+scalability:
+
+- **Framework**: [Next.js 14](https://nextjs.org/) (App Router)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Database**: [MongoDB](https://www.mongodb.com/) (with Mongoose ODM)
+- **Authentication**: [NextAuth.js](https://next-auth.js.org/)
+- **UI Components**: [Shadcn/ui](https://ui.shadcn.com/) &
+  [Lucide React](https://lucide.dev/)
+- **Drag & Drop**: [@hello-pangea/dnd](https://github.com/hello-pangea/dnd)
+- **Notifications**: [Sonner](https://sonner.emilkowal.ski/)
+
+---
 
 ## Getting Started
 
-First, run the development server:
+Follow these steps to get a local copy up and running.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Prerequisites
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Node.js (v18 or higher recommended)
+- npm or yarn
+- A MongoDB connection string (local or Atlas)
+- Google Cloud Console credentials (for OAuth)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Installation
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1.  **Clone the repository**
 
-## Learn More
+    ```bash
+    git clone https://github.com/TheMamunDev/Pro-Manage.git
+    cd pro-manage
+    ```
 
-To learn more about Next.js, take a look at the following resources:
+2.  **Install dependencies**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+    ```bash
+    npm install
+    ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3.  **Set up Environment Variables** Create a `.env` file in the root directory
+    and add the following variables:
 
-## Deploy on Vercel
+    ```env
+    # Database
+    MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/promanage
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+    # NextAuth
+    NEXTAUTH_URL=http://localhost:3000
+    NEXTAUTH_SECRET=your_super_secret_key_here
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+    # Google OAuth
+    GOOGLE_CLIENT_ID=your_google_client_id
+    GOOGLE_CLIENT_SECRET=your_google_client_secret
+    ```
+
+4.  **Run the development server**
+
+    ```bash
+    npm run dev
+    ```
+
+5.  **Open your browser** Navigate to `http://localhost:3000` to see the
+    application in action.
+
+---
+
+## Contributing
+
+We welcome contributions! If you have an idea for a feature or found a bug, feel
+free to open an issue or submit a pull request.
+
+Made with ❤️ by the ProManage Team.
