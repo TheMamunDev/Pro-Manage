@@ -100,9 +100,8 @@ export default function ProjectListPage({
 
   return (
     <div className="flex flex-col h-full bg-background/50 p-6 space-y-6">
-      {/* Toolbar */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4 flex-1">
+        <div className="flex flex-col md:flex-row md:items-center gap-4 flex-1">
           <div className="relative w-72">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
@@ -112,25 +111,27 @@ export default function ProjectListPage({
               onChange={e => setSearch(e.target.value)}
             />
           </div>
-          <Select value={filter} onValueChange={setFilter}>
-            <SelectTrigger className="w-[180px] bg-background">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="todo">To Do</SelectItem>
-              <SelectItem value="in-progress">In Progress</SelectItem>
-              <SelectItem value="done">Done</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="text-sm text-muted-foreground">
-          Showing {filteredTasks.length} tasks
+          <div className="flex justify-between items-center">
+            <Select value={filter} onValueChange={setFilter}>
+              <SelectTrigger className="w-[180px] bg-background">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="todo">To Do</SelectItem>
+                <SelectItem value="in-progress">In Progress</SelectItem>
+                <SelectItem value="done">Done</SelectItem>
+              </SelectContent>
+            </Select>
+            <div className="text-sm text-muted-foreground">
+              Showing {filteredTasks.length} tasks
+            </div>
+          </div>
         </div>
       </div>
 
       <div className="rounded-md border bg-card">
-        <Table>
+        <Table className="hidden md:block">
           <TableHeader>
             <TableRow className="bg-muted/50">
               <TableHead className="w-[300px]">Title</TableHead>
@@ -220,6 +221,43 @@ export default function ProjectListPage({
             )}
           </TableBody>
         </Table>
+        <div className="space-y-4 md:hidden">
+          {filteredTasks.map(task => (
+            <div
+              key={task._id}
+              className="rounded-lg border p-4 space-y-3 bg-card"
+            >
+              <div className="flex items-center gap-2 font-medium">
+                {getStatusIcon(task.status)}
+                <span>{task.title}</span>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                <Badge variant="secondary" className="capitalize">
+                  {task.status.replace('-', ' ')}
+                </Badge>
+                <Badge variant="outline" className="capitalize">
+                  {task.priority}
+                </Badge>
+              </div>
+
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Avatar className="h-5 w-5">
+                  <AvatarImage src={task.assignee?.image} />
+                  <AvatarFallback>{task.assignee?.name?.[0]}</AvatarFallback>
+                </Avatar>
+                {task.assignee?.name || 'Unassigned'}
+              </div>
+
+              {task.dueDate && (
+                <div className="flex items-center text-xs text-muted-foreground">
+                  <Calendar className="mr-1 h-3.5 w-3.5" />
+                  {format(new Date(task.dueDate), 'MMM d, yyyy')}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
