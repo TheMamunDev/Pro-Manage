@@ -31,8 +31,6 @@ you the visibility you need to ship faster.
 
 ## Screenshots
 
-<img src="https://i.ibb.co.com/1fRsXngS/modern-browser-mockup-3.png" alt="promanage" height="400px">
-<img src="https://i.ibb.co.com/F1BTK6D/modern-browser-mockup-2.png" alt="promanage" height="400px">
 <img src="https://i.ibb.co.com/sJF4c2Df/modern-browser-mockup-1.png" alt="promanage">
 
 ---

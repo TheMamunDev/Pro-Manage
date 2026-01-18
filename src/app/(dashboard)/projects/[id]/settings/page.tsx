@@ -206,7 +206,7 @@ export default function ProjectSettingsPage({
         <p className="text-muted-foreground">Manage details and team access.</p>
       </div>
 
-      <div className="grid gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <Card>
           <CardHeader>
             <CardTitle>General Information</CardTitle>
@@ -347,7 +347,7 @@ export default function ProjectSettingsPage({
                 return (
                   <div
                     key={user._id}
-                    className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
+                    className="flex flex-col md:flex-row gap-3 md:gap-0 md:items-center justify-between p-4 hover:bg-muted/50 transition-colors"
                   >
                     <div className="flex items-center gap-4">
                       <Avatar>
