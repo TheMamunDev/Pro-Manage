@@ -120,7 +120,7 @@ export default function SettingsPage() {
         </p>
       </div>
 
-      <Card>
+      <Card className="flex">
         <CardHeader>
           <CardTitle>Profile</CardTitle>
           <CardDescription>
@@ -218,13 +218,13 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="flex">
         <CardHeader>
           <CardTitle>Appearance</CardTitle>
           <CardDescription>Customize the interface theme.</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
             <Button
               variant={theme === 'light' ? 'default' : 'outline'}
               className="flex-1"
@@ -260,7 +260,7 @@ export default function SettingsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-0">
             <div className="space-y-1">
               <p className="font-medium">Delete Account</p>
               <p className="text-sm text-muted-foreground">

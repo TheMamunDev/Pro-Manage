@@ -107,17 +107,20 @@ export default function TeamPage() {
         <CardContent>
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0">
                 <TableHead>User</TableHead>
                 <TableHead>Role</TableHead>
                 <TableHead>Joined</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="md:text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
+            <TableBody className="grid grid-cols-1">
               {users.map(user => (
-                <TableRow key={user._id}>
-                  <TableCell className="flex items-center gap-3">
+                <TableRow
+                  key={user._id}
+                  className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                >
+                  <TableCell>
                     <Avatar className="h-9 w-9">
                       <AvatarImage src={user.image} />
                       <AvatarFallback>{user.name?.[0] || 'U'}</AvatarFallback>
@@ -146,7 +149,7 @@ export default function TeamPage() {
                   <TableCell className="text-muted-foreground">
                     {new Date(user.createdAt).toLocaleDateString()}
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="md:text-right">
                     {isAdmin && session?.user?.id !== user._id ? (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
